@@ -1,6 +1,18 @@
 # Crusader Kings
 ## made by Ježek Kay and Eggenberger Yann
 
+DODO (Task / Responsibility )
+
+Update map with Ireland and Wales / Yann
+
+
+
+
+
+Where you Start: You will be able to Pick where you start, the Options are Wales, Scotland (Alba), Ireland.
+According to your Startingpoint you get Slightly Modified troops.
+
+
 Reason you win: You Conquer Every Available Room (except the ocean) 
 
 How you conquer: Every Room Starts with a Fixed Number of troops and certained troop Classes specified on the room you are in.
@@ -12,3 +24,78 @@ all of them buffing some of your fighting stats and giving a penalty to other st
 
 ![CK3 Worldmap](docs/Map%20CK%203%20Layout.png)
 The map is a work in progress.
+
+The Troops for Starting and For the Different rooms, in their quantity and Quality and their Countermeasures and by how much stats they get countered:
+
+Starting Units Alba: 
+  Pikes
+  Levies
+
+Starting Units Ireland:
+  Armored Footmen
+  Levies
+
+Staring Units Wales:
+  Archers
+  Levies
+
+Units England:
+  Levies
+  Longbows
+  Huscarls
+
+  Units France:
+  Armored Horsemen
+  Levies
+  Footknights
+
+  Units Danemark:
+  Huscarls
+  Levies
+  Archers
+
+  Units East Francia:
+  Armored Footmen
+  Footknights
+  levies
+  Archers
+
+  Croatia:
+  Armored Horsemen
+  Light Horsemen
+
+  Bohemia:
+  Armored Footmen
+  Pikes
+  Winged Hussars
+  
+  Rock Paper scissors Mecanic:
+
+  Horsetroops: Armored Horsemen, Light Horsemen
+  Pikean Troops: Pikes
+  Armored Foottroops: Armored Footmen, Footknights, Huscarls
+  Archertypes: Archers, Longbows
+  levies
+
+Advantage: When a Unit is countered by another, they might get a debuff while Fighting them, Great numbers can still beat troops countering others, items may grant less debuffs while fighting certain types of troops or greater Troop size
+
+Who beats who: 
+
+Horsetroops:
+  Beat: Archertypes
+  get beaten by: Pikean Troops
+  
+Pikean Troops:
+  Beat: Horsetroops
+  get beaten by: Archertypes
+
+Armored Foottroops: 
+  Beat: Pikean Troops
+  get beaten by: Horsetroops
+
+  Archertypes: 
+    Beat: Pikean Troops
+    get beaten By Horsetroops
+
+    levies: slight damage reduction against every troop but no great counters
+
