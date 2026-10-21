@@ -1,10 +1,5 @@
 # Crusader Kings
-## von Ježek Kay und Eggenberger Yann
-
-Kurzusammenfassung (wird auf nächste Woche erweitert): Kleines RPG mit Gegnern, Power-ups und Klassen.
-
-Ideas: 
-Winning Room: Bohemia since its only Accessable through other rooms and not by Water, also it is a Dead End you could only go back from there.
+## made by Ježek Kay and Eggenberger Yann
 
 Reason you win: You Conquer Every Available Room (except the ocean) 
 
