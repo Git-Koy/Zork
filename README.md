@@ -10,5 +10,5 @@ for that room. You will have a max Cap of Different Troops you can use to Fight.
 Items in Rooms: The Rooms will have "Items" that you will be able to access and Pick up after you have defeated the Troops in this room. There will be a Selection of 3 Different types of Items 
 all of them buffing some of your fighting stats and giving a penalty to other stats. You will have a cap on how many Items you can carry around increasing with every room beaten. After you have beaten a room you will always have access to its items and you can go back to switch out to be given the decision on what Item to take with you again. this interaction needs to be facultative you dont need to choose again in every room you pass. You may need different skills or combinations of skills to defeat the enemys.
 
-[docs/Map CK 3 Layout.png]
+![CK3 Worldmap](docs/Map CK 3 Layout.png)
 The map is a work in progress.
