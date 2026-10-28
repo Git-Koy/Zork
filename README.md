@@ -97,5 +97,23 @@ Armored Foottroops:
     Beat: Pikean Troops
     get beaten By Horsetroops
 
-    levies: slight damage reduction against every troop but no great counters
+levies: 
+slight damage reduction against every troop but no great counters
+
+Damage Calculation:
+
+Damage gets calculated in 3 Ways:
+
+  Flat dmg
+  Counter buff / debuff
+  Armour
+  Health
+
+  When applied Armor, it gives each troop a percentage to not take once when dmg gets calculated, after that 1 Armourstat is removed until the fight is over.
+  Flat dmg: You take the DMG Stat and the Counter Buff/Debuff that calculated is effective dmg you deal now you try the Armour % of the enemy to look at if they take dmg or not.
+  Dmg is Deducted from overall health of the Troop type, for each troop type this gets calculated individually so everytime they take according dmg. Armour gets removed when under 50% of original    troop size or Troopsize <100.
+
+  
+
+
 
