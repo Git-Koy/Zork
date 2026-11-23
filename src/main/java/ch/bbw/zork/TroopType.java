@@ -1,5 +1,7 @@
 package ch.bbw.zork;
 
+import java.util.Locale;
+
 public enum TroopType {
 	PIKES("Pikes", TroopCategory.PIKEMEN, 3),
 	LEVIES("Levies", TroopCategory.LEVIES, 1),
@@ -33,4 +35,32 @@ public enum TroopType {
 		return strength;
 	}
 
+	public boolean counters(TroopType other) {
+		switch (category) {
+		case CAVALRY:
+			return other.category == TroopCategory.ARCHERS
+					|| other.category == TroopCategory.HEAVY_INFANTRY;
+		case PIKEMEN:
+			return other.category == TroopCategory.CAVALRY;
+		case HEAVY_INFANTRY:
+		case ARCHERS:
+			return other.category == TroopCategory.PIKEMEN;
+		default:
+			return false;
+		}
+	}
+
+	public static TroopType fromName(String value) {
+		if (value == null) {
+			return null;
+		}
+		String normalized = value.trim().replace('_', ' ').toLowerCase(Locale.ENGLISH);
+		for (TroopType type : values()) {
+			if (type.displayName.toLowerCase(Locale.ENGLISH).equals(normalized)
+					|| type.name().toLowerCase(Locale.ENGLISH).replace('_', ' ').equals(normalized)) {
+				return type;
+			}
+		}
+		return null;
+	}
 }
