@@ -22,8 +22,8 @@ public enum GameItem {
 	BOHEMIAN_PIKEHEAD("bohemian_pikehead", "Bohemian Pikehead", TroopCategory.PIKEMEN,
 			TroopCategory.LEVIES);
 
-	private static final int BONUS_PERCENT = 20;
-	private static final int PENALTY_PERCENT = 10;
+	private static final int BONUS_PERCENT = 10;
+	private static final int PENALTY_PERCENT = 5;
 
 	private final String id;
 	private final String displayName;
