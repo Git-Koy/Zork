@@ -1,1 +1,46 @@
-package ch.bbw.zork;/** * Author:  Michael Kolling, Version: 1.1, Date: August 2000 * refactoring: Rinaldo Lanza, September 2020 */import java.util.ArrayList;import java.util.HashMap;import java.util.List;import java.util.stream.Collectors;public class Room {		private String description;	private HashMap<String, Room> exits;	public Room(String description) {		this.description = description;		this.exits = new HashMap<>();	}	public void setExits(Room north, Room east, Room south, Room west) {		exits.put("north", north);		exits.put("east", east);		exits.put("south", south);		exits.put("west", west);	}	public String shortDescription() {		return description;	}	public String longDescription() {		StringBuilder stringBuilder = new StringBuilder("You are in " + description + ".\n");		stringBuilder.append(exitString());		return stringBuilder.toString();	}	private String exitString() {		return "Exits:" + String.join(" ", exits.keySet());	}	public Room nextRoom(String direction) {		return exits.get(direction);	}}
+package ch.bbw.zork;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+public class Room {
+	private final String description;
+	private final Map<String, Room> exits = new LinkedHashMap<String, Room>();
+
+	public Room(String description) {
+		this.description = description;
+	}
+
+	public void setExits(Room north, Room east, Room south, Room west) {
+		exits.clear();
+		setExit("north", north);
+		setExit("east", east);
+		setExit("south", south);
+		setExit("west", west);
+	}
+
+	public void setExit(String direction, Room room) {
+		if (room != null) {
+			exits.put(direction, room);
+		}
+	}
+
+	public String shortDescription() {
+		return description;
+	}
+
+	public String longDescription() {
+		return "You are in " + description + ".\n" + exitString();
+	}
+
+	private String exitString() {
+		if (exits.isEmpty()) {
+			return "Exits: none";
+		}
+		return "Exits: " + String.join(" ", exits.keySet());
+	}
+
+	public Room nextRoom(String direction) {
+		return exits.get(direction);
+	}
+}
