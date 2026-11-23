@@ -45,4 +45,18 @@ public class Army {
 		unlockedTroops.add(type);
 	}
 
+	public boolean switchTroop(TroopType from, TroopType to) {
+		int oldCount = getTroopCount(from);
+		if (oldCount == 0 || !unlockedTroops.contains(to) || troops.containsKey(to)) {
+			return false;
+		}
+		int survivingCount = oldCount - Math.round(oldCount * 0.05f);
+		int replacementCount = survivingCount * from.getStrength() / to.getStrength();
+		if (replacementCount <= 0) {
+			return false;
+		}
+		troops.remove(from);
+		troops.put(to, replacementCount);
+		return true;
+	}
 }
