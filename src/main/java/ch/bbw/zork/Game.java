@@ -111,6 +111,7 @@ public class Game {
 		System.out.println("Type 'help' if you need help.");
 		System.out.println();
 		System.out.println("Choose your starting kingdom with: start <kingdom>");
+		System.out.println("Available kingdoms: " + kingdomNames() + ".");
 	}
 
 	private boolean processCommand(Command command) {
