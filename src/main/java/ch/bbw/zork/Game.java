@@ -153,6 +153,8 @@ public class Game {
 	}
 
 	private void printHelp() {
+		System.out.println("Choose a kingdom, travel to neighboring lands, and use your army to conquer them.");
+		System.out.println("To attack, go to an unconquered kingdom and enter 'attack'. Your armies are compared automatically.");
 		System.out.println();
 		System.out.println("Your command words are:");
 		System.out.println(parser.showCommands());
