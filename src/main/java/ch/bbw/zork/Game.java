@@ -232,7 +232,11 @@ public class Game {
 				System.out.println("The battle is a draw. Switch troop types or equip an item and try again.");
 			} else if (result.isPlayerVictory()) {
 				conquered.add(currentKingdom);
+				for (TroopType type : currentKingdom.getTroopTypes()) {
+					playerArmy.unlockTroop(type);
+				}
 				System.out.println(currentKingdom.getDisplayName() + " has been conquered.");
+				System.out.println("New troop types unlocked. Use 'troops' to view them.");
 			} else {
 				System.out.println("The defending kingdom wins. Your army remains intact.");
 			}
