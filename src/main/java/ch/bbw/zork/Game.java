@@ -128,6 +128,8 @@ public class Game {
 			printTroops();
 		} else if (commandWord.equals("switch")) {
 			switchTroops(command);
+		} else if (commandWord.equals("equip")) {
+			equipItem(command);
 		} else if (commandWord.equals("go")) {
 			goRoom(command);
 		} else if (commandWord.equals("quit")) {
@@ -406,5 +408,44 @@ public class Game {
 
 	private void showInventory() {
 		player.showInventory();
+		if (!player.getItems().isEmpty()) {
+			List<String> itemIds = new ArrayList<String>();
+			for (Item item : player.getItems()) {
+				itemIds.add(item.getName());
+			}
+			System.out.println("Item ids: " + String.join(", ", itemIds) + ".");
+		}
+		System.out.println("Equipped item: "
+				+ (equippedItem == null ? "none" : describeItem(equippedItem)));
+	}
+
+	private void equipItem(Command command) {
+		if (playerArmy == null) {
+			System.out.println("Choose a starting kingdom first.");
+			return;
+		}
+		if (command.getArgumentCount() != 1) {
+			System.out.println("Use: equip <item-id>.");
+			return;
+		}
+		Item item = findItem(player.getItems(), command.getSecondWord());
+		if (item == null) {
+			System.out.println("You can only equip an item in your inventory.");
+			return;
+		}
+		equippedItem = item;
+		System.out.println("Equipped " + describeItem(item) + ".");
+	}
+
+	private String describeItem(Item item) {
+		List<String> effects = new ArrayList<String>();
+		for (TroopCategory category : TroopCategory.values()) {
+			int modifier = item.getPowerModifier(category);
+			if (modifier != 0) {
+				effects.add((modifier > 0 ? "+" : "") + modifier + "% "
+						+ category.name().toLowerCase().replace('_', ' ') + " power");
+			}
+		}
+		return item.getDescription() + " (" + String.join(", ", effects) + ")";
 	}
 }
