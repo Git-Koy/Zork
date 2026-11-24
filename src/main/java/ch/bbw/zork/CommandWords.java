@@ -1,14 +1,14 @@
 package ch.bbw.zork;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * Recognizes and lists the commands available in the game.
  *
  * @author Michael Kolling (template, 1999)
  * @author Rinaldo Lanza (refactoring, 2020)
  */
-
-import java.util.Arrays;
-import java.util.List;
 
 public class CommandWords {
 
