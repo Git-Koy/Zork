@@ -12,7 +12,7 @@ public final class CombatEngine {
 		return new Result(playerPower, enemyPower);
 	}
 
-	private static long calculatePower(Army army, Army opponent, GameItem item) {
+	private static long calculatePower(Army army, Army opponent, Item item) {
 		long power = 0;
 		for (Map.Entry<TroopType, Integer> troop : army.getTroops().entrySet()) {
 			TroopType type = troop.getKey();
