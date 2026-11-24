@@ -6,7 +6,7 @@ public final class CombatEngine {
 	private CombatEngine() {
 	}
 
-	public static Result compare(Army player, Army enemy, GameItem item) {
+	public static Result compare(Army player, Army enemy, Item item) {
 		long playerPower = calculatePower(player, enemy, item);
 		long enemyPower = calculatePower(enemy, player, null);
 		return new Result(playerPower, enemyPower);
