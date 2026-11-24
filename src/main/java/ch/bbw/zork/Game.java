@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -116,6 +117,10 @@ public class Game {
 			startGame(command);
 		} else if (commandWord.equals("attack")) {
 			attackCurrentKingdom(command);
+		} else if (commandWord.equals("status")) {
+			printStatus();
+		} else if (commandWord.equals("troops")) {
+			printTroops();
 		} else if (commandWord.equals("go")) {
 			goRoom(command);
 		} else if (commandWord.equals("quit")) {
@@ -210,6 +215,42 @@ public class Game {
 			if (playerArmy == null) {
 				System.out.println("Choose a starting kingdom first.");
 				return;
+			}
+
+			private void printStatus() {
+				if (playerArmy == null) {
+					System.out.println("Choose a starting kingdom first.");
+					return;
+				}
+				String location = currentKingdom == null ? "The open ocean"
+						: currentKingdom.getDisplayName()
+								+ (conquered.contains(currentKingdom) ? " (controlled)" : " (unconquered)");
+				System.out.println("Location: " + location);
+				System.out.println("Army: " + playerArmy.getTotalTroops() + " soldiers in "
+						+ playerArmy.getTroops().size() + " troop types.");
+				System.out.println("Conquered: " + conquered.size() + "/" + Kingdom.values().length + ".");
+				System.out.println("Equipped item: "
+						+ (equippedItem == null ? "none" : equippedItem.getDescription()));
+			}
+
+			private void printTroops() {
+				if (playerArmy == null) {
+					System.out.println("Choose a starting kingdom first.");
+					return;
+				}
+				System.out.println("Your troops:");
+				for (Map.Entry<TroopType, Integer> troop : playerArmy.getTroops().entrySet()) {
+					System.out.println("  " + troop.getKey().getDisplayName() + ": " + troop.getValue());
+				}
+				System.out.println("Unlocked types: " + troopNames(playerArmy.getUnlockedTroops()));
+			}
+
+			private String troopNames(Set<TroopType> troopTypes) {
+				List<String> names = new ArrayList<String>();
+				for (TroopType type : troopTypes) {
+					names.add(type.getDisplayName());
+				}
+				return String.join(", ", names);
 			}
 			if (command.getArgumentCount() != 0) {
 				System.out.println("Use: attack");
