@@ -12,7 +12,7 @@ Every country starts with a fixed number of troops from specific troop classes.
 While not in a battle, you will be able to choose between different troop classes. When you conquer a country, your maximum army size increases, and you gain access to the troops of that country. You will have a cap on the number of different troop types you can use to fight. When you change out one troop type for another, you get a slight penalty for switching based on the troops' strength, meaning if you switch from a weaker unit to an overall more powerful one, you get fewer of the new troops than you had of the old. On top of that, you lose 5% of the troops you are switching away from.
 
 ## Items
-The countries will have items that you will be able to access and pick up after defeating that country's troops. There will be a selection of different categories of items, all of them buffing some of your stats and giving a penalty to others. You will have a cap on how many items you can carry, which increases with every victory. After you have beaten a country, you will have access to its items, and you can go back to other countries that you have already conquered to switch these items, letting you decide which items you want to use in later battles. This interaction is optional; you don't need to choose again after every battle. You may need different skills or combinations of skills to defeat the enemies. An explanation of skills will be added at a later time.
+The countries will have items that you will be able to access and pick up after defeating that country's troops. There will be a selection of different categories of items, all of them buffing some of your stats and giving a penalty to others. You will have a cap on how many items you can carry, which increases with every victory. After you have beaten a country, you will have access to its items, and you can go back to other countries that you have already conquered to switch these items, letting you decide which items you want to use in later battles. This interaction is optional; you don't need to choose again after every battle. You may need different skills or combinations of skills to defeat the enemies.
 
 ## The world map
 ![CK3 Worldmap](docs/map.png)
@@ -60,8 +60,6 @@ These are the troops for the different countries:
 1. Units of Bohemia:
      - Armored Footmen
      - Pikes
-
-Their quantity and quality, their counters, and by how much they get countered will be added at a later time.
 
 ## Counter System (Rock Paper Scissors Mechanic)
 - Cavalry: Armored Horsemen, Light Horsemen
