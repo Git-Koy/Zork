@@ -54,13 +54,17 @@ public enum TroopType {
 		if (value == null) {
 			return null;
 		}
-		String normalized = value.trim().replace('_', ' ').toLowerCase(Locale.ENGLISH);
+		String normalized = normalize(value);
 		for (TroopType type : values()) {
-			if (type.displayName.toLowerCase(Locale.ENGLISH).equals(normalized)
-					|| type.name().toLowerCase(Locale.ENGLISH).replace('_', ' ').equals(normalized)) {
+			if (normalize(type.displayName).equals(normalized)
+					|| normalize(type.name()).equals(normalized)) {
 				return type;
 			}
 		}
 		return null;
+	}
+
+	private static String normalize(String value) {
+		return value.trim().replace('_', ' ').replace('-', ' ').toLowerCase(Locale.ENGLISH);
 	}
 }
