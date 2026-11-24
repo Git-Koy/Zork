@@ -61,6 +61,10 @@ These are the troops for the different countries:
      - Armored Footmen
      - Pikes
 
+1. Bavaria
+     - Huscarls
+     - Levies
+
 ## Counter System (Rock Paper Scissors Mechanic)
 - Cavalry: Armored Horsemen, Light Horsemen
 - Pikemen: Pikes
