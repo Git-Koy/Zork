@@ -106,3 +106,7 @@ Damage is calculated with four numbers:
    - When armor is applied, it gives each troop a percentage chance to not take damage; after that, one point of armor is disabled for the rest of the fight.
  - Health
    - Damage is subtracted from each troop category individually.
+
+## Documentation
+- [How we solved the tasks](docs/tasks.md)
+- [Class diagram](docs/class-diagram.png)
