@@ -393,6 +393,9 @@ public class Game {
 			return;
 		}
 		player.removeItem(itemToDrop);
+		if (itemToDrop == equippedItem) {
+			equippedItem = null;
+		}
 		currentRoom.addItem(itemToDrop);
 		System.out.println("Removed " + itemToDrop.getDescription() + " from the inventory.");
 	}
