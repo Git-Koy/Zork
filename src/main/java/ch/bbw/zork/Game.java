@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -121,7 +122,7 @@ public class Game {
 		} else if (commandWord.equals("start")) {
 			startGame(command);
 		} else if (commandWord.equals("attack")) {
-			attackCurrentKingdom(command);
+			return attackCurrentKingdom(command);
 		} else if (commandWord.equals("status")) {
 			printStatus();
 		} else if (commandWord.equals("troops")) {
@@ -153,7 +154,11 @@ public class Game {
 	}
 
 	private void printHelp() {
-		System.out.println("Choose a kingdom and explore the connected lands.");
+		System.out.println("Choose a starting kingdom with 'start <kingdom>'.");
+		System.out.println("Travel to neighboring countries with 'go <country-id>'.");
+		System.out.println("To attack, enter an unconquered kingdom and use 'attack'. Your army strengths are compared automatically.");
+		System.out.println("Use 'pickup' and 'inventory' to manage items; equip a carried item with 'equip <item-id>'.");
+		System.out.println("Use 'switch <current_type> <unlocked_type>' to change troop types.");
 		System.out.println();
 		System.out.println("Your command words are:");
 		System.out.println(parser.showCommands());
@@ -219,102 +224,14 @@ public class Game {
 			System.out.println("Choose a starting kingdom first with 'start <kingdom>'.");
 			return;
 		}
-
-		private void attackCurrentKingdom(Command command) {
-			if (playerArmy == null) {
-				System.out.println("Choose a starting kingdom first.");
-				return;
-			}
-
-			private void printStatus() {
-				if (playerArmy == null) {
-					System.out.println("Choose a starting kingdom first.");
-					return;
-				}
-				String location = currentKingdom == null ? "The open ocean"
-						: currentKingdom.getDisplayName()
-								+ (conquered.contains(currentKingdom) ? " (controlled)" : " (unconquered)");
-				System.out.println("Location: " + location);
-				System.out.println("Army: " + playerArmy.getTotalTroops() + " soldiers in "
-						+ playerArmy.getTroops().size() + " troop types.");
-				System.out.println("Conquered: " + conquered.size() + "/" + Kingdom.values().length + ".");
-				System.out.println("Equipped item: "
-						+ (equippedItem == null ? "none" : equippedItem.getDescription()));
-			}
-
-			private void printTroops() {
-				if (playerArmy == null) {
-					System.out.println("Choose a starting kingdom first.");
-					return;
-				}
-				System.out.println("Your troops:");
-				for (Map.Entry<TroopType, Integer> troop : playerArmy.getTroops().entrySet()) {
-					System.out.println("  " + troop.getKey().getDisplayName() + ": " + troop.getValue());
-				}
-				System.out.println("Unlocked types: " + troopNames(playerArmy.getUnlockedTroops()));
-			}
-
-			private String troopNames(Set<TroopType> troopTypes) {
-				List<String> names = new ArrayList<String>();
-				for (TroopType type : troopTypes) {
-					names.add(type.getDisplayName());
-				}
-				return String.join(", ", names);
-			}
-
-			private void switchTroops(Command command) {
-				if (playerArmy == null) {
-					System.out.println("Choose a starting kingdom first.");
-					return;
-				}
-				if (command.getArgumentCount() != 2) {
-					System.out.println("Use: switch <current_type> <unlocked_type>.");
-					return;
-				}
-				TroopType from = TroopType.fromName(command.getSecondWord());
-				TroopType to = TroopType.fromName(command.getThirdWord());
-				if (from == null || to == null || !playerArmy.switchTroop(from, to)) {
-					System.out.println("That troop switch is not available. Use 'troops' to see unlocked types.");
-					return;
-				}
-				System.out.println("Your troops are now using " + to.getDisplayName() + ".");
-			}
-			if (command.getArgumentCount() != 0) {
-				System.out.println("Use: attack");
-				return;
-			}
-			if (currentKingdom == null) {
-				System.out.println("There is no kingdom to attack at sea.");
-				return;
-			}
-			if (conquered.contains(currentKingdom)) {
-				System.out.println("You already control this kingdom.");
-				return;
-			}
-
-			Army enemy = new Army(currentKingdom.getTroops());
-			CombatEngine.Result result = CombatEngine.compare(playerArmy, enemy, equippedItem);
-			System.out.println("Your army strength: " + result.getPlayerPower());
-			System.out.println(currentKingdom.getDisplayName() + " army strength: " + result.getEnemyPower());
-			if (result.isDraw()) {
-				System.out.println("The battle is a draw. Switch troop types or equip an item and try again.");
-			} else if (result.isPlayerVictory()) {
-				conquered.add(currentKingdom);
-				for (TroopType type : currentKingdom.getTroopTypes()) {
-					playerArmy.unlockTroop(type);
-				}
-				System.out.println(currentKingdom.getDisplayName() + " has been conquered.");
-				System.out.println("New troop types unlocked. Use 'troops' to view them.");
-			} else {
-				System.out.println("The defending kingdom wins. Your army remains intact.");
-			}
-		}
-		if (command.getArgumentCount() != 1) {
+		if (command.getArgumentCount() == 0) {
 			System.out.println("Go where? Enter a neighboring country name.");
 			return;
 		}
 
-		Room nextRoom = currentRoom.nextRoom(command.getSecondWord());
+		String countryId = command.getArgumentString().trim().toLowerCase(Locale.ENGLISH)
+				.replace(' ', '-').replace('_', '-');
+		Room nextRoom = currentRoom.nextRoom(countryId);
 		if (nextRoom == null) {
 			System.out.println("That is not an option! Check your neighbours.");
 			return;
@@ -330,6 +247,104 @@ public class Game {
 		} else {
 			System.out.println("This kingdom is unconquered. Use 'attack' to fight.");
 		}
+	}
+
+	private boolean attackCurrentKingdom(Command command) {
+		if (playerArmy == null) {
+			System.out.println("Choose a starting kingdom first.");
+			return false;
+		}
+		if (command.getArgumentCount() != 0) {
+			System.out.println("Use: attack");
+			return false;
+		}
+		if (currentKingdom == null) {
+			System.out.println("There is no kingdom to attack at sea.");
+			return false;
+		}
+		if (conquered.contains(currentKingdom)) {
+			System.out.println("You already control this kingdom.");
+			return false;
+		}
+
+		Army enemy = new Army(currentKingdom.getTroops());
+		CombatEngine.Result result = CombatEngine.compare(playerArmy, enemy, equippedItem);
+		System.out.println("Your army strength: " + result.getPlayerPower());
+		System.out.println(currentKingdom.getDisplayName() + " army strength: " + result.getEnemyPower());
+		if (result.isDraw()) {
+			System.out.println("The battle is a draw. Switch troop types or equip an item and try again.");
+			return false;
+		}
+		if (!result.isPlayerVictory()) {
+			System.out.println("The defending kingdom wins. Your army remains intact.");
+			return false;
+		}
+
+		conquered.add(currentKingdom);
+		for (TroopType type : currentKingdom.getTroopTypes()) {
+			playerArmy.unlockTroop(type);
+		}
+		System.out.println(currentKingdom.getDisplayName() + " has been conquered.");
+		System.out.println("New troop types unlocked. Use 'troops' to view them.");
+		if (conquered.size() == Kingdom.values().length) {
+			System.out.println("You have conquered every kingdom. You win!");
+			return true;
+		}
+		return false;
+	}
+
+	private void printStatus() {
+		if (playerArmy == null) {
+			System.out.println("Choose a starting kingdom first.");
+			return;
+		}
+		String location = currentKingdom == null ? "The open ocean"
+				: currentKingdom.getDisplayName()
+						+ (conquered.contains(currentKingdom) ? " (controlled)" : " (unconquered)");
+		System.out.println("Location: " + location);
+		System.out.println("Army: " + playerArmy.getTotalTroops() + " soldiers in "
+				+ playerArmy.getTroops().size() + " troop types.");
+		System.out.println("Conquered: " + conquered.size() + "/" + Kingdom.values().length + ".");
+		System.out.println("Equipped item: "
+				+ (equippedItem == null ? "none" : describeItem(equippedItem)));
+	}
+
+	private void printTroops() {
+		if (playerArmy == null) {
+			System.out.println("Choose a starting kingdom first.");
+			return;
+		}
+		System.out.println("Your troops:");
+		for (Map.Entry<TroopType, Integer> troop : playerArmy.getTroops().entrySet()) {
+			System.out.println("  " + troop.getKey().getDisplayName() + ": " + troop.getValue());
+		}
+		System.out.println("Unlocked types: " + troopNames(playerArmy.getUnlockedTroops()));
+	}
+
+	private String troopNames(Set<TroopType> troopTypes) {
+		List<String> names = new ArrayList<String>();
+		for (TroopType type : troopTypes) {
+			names.add(type.getDisplayName());
+		}
+		return String.join(", ", names);
+	}
+
+	private void switchTroops(Command command) {
+		if (playerArmy == null) {
+			System.out.println("Choose a starting kingdom first.");
+			return;
+		}
+		if (command.getArgumentCount() != 2) {
+			System.out.println("Use: switch <current_type> <unlocked_type>.");
+			return;
+		}
+		TroopType from = TroopType.fromName(command.getSecondWord());
+		TroopType to = TroopType.fromName(command.getThirdWord());
+		if (from == null || to == null || !playerArmy.switchTroop(from, to)) {
+			System.out.println("That troop switch is not available. Use 'troops' to see unlocked types.");
+			return;
+		}
+		System.out.println("Your troops are now using " + to.getDisplayName() + ".");
 	}
 
 	private void back(Command command) {
@@ -354,8 +369,17 @@ public class Game {
 		for (int index = 0; index < rooms.size(); index++) {
 			Room room = rooms.get(index);
 			String here = room == currentRoom ? " (You are here)" : "";
-			System.out.println((index + 1) + ". " + room.getDescription() + room.itemString() + here + ".");
+			System.out.println((index + 1) + ". " + room.getDescription() + room.itemString()
+					+ roomControlStatus(room) + here + ".");
 		}
+	}
+
+	private String roomControlStatus(Room room) {
+		Kingdom kingdom = kingdomFor(room);
+		if (kingdom == null || playerArmy == null) {
+			return "";
+		}
+		return conquered.contains(kingdom) ? " (controlled)" : " (unconquered)";
 	}
 
 	private void pickUpItem(Command command) {
@@ -446,7 +470,7 @@ public class Game {
 			int modifier = item.getPowerModifier(category);
 			if (modifier != 0) {
 				effects.add((modifier > 0 ? "+" : "") + modifier + "% "
-						+ category.name().toLowerCase().replace('_', ' ') + " power");
+						+ category.name().toLowerCase(Locale.ENGLISH).replace('_', ' ') + " power");
 			}
 		}
 		return item.getDescription() + " (" + String.join(", ", effects) + ")";
