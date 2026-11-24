@@ -1,1 +1,478 @@
-package ch.bbw.zork;import java.util.ArrayList;import java.util.Arrays;import java.util.HashSet;import java.util.Stack;/** * Class Game - the main class of the "Zork" game. * * Author:  Michael Kolling, 1.1, March 2000 * refactoring: Rinaldo Lanza, September 2020 */public class Game {	private Parser parser;	private Room currentRoom;	private Room alba, ireland, wales, england, france, denmark, east_francia, croatia, bohemia;	public Game() {		parser = new Parser(System.in);		alba = new Room("Kingdom of Alba.");		ireland = new Room("Kingdom of Ireland.");		wales = new Room("Kingdom of Wales");		england = new Room("Kingdom of England.");		france = new Room("Kingdom of France.");		denmark = new Room("Kingdom of Denmark.");		east_francia = new Room("Kingdom of East Francia.");		croatia = new Room("Kingdom of Croatia.");		bohemia = new Room("Kingdom of Bohemia.");		// currentRoom = ...;	}	/**	 *  Main play routine.  Loops until end of play.	 */	public void play() {		printWelcome();		// Enter the main command loop.  Here we repeatedly read commands and		// execute them until the game is over.		boolean finished = false;		while (!finished) {			Command command = parser.getCommand();			finished = processCommand(command);		}		System.out.println("Thank you for playing.  Good bye.");	}	private void printWelcome() {		System.out.println();		System.out.println("Welcome to Zork!");		System.out.println("Zork is a simple adventure game.");		System.out.println("Type 'help' if you need help.");		System.out.println();		System.out.println(currentRoom.longDescription());	}	private boolean processCommand(Command command) {		if (command.isUnknown()) {			System.out.println("I don't know what you mean...");			return false;		}		String commandWord = command.getCommandWord();		if (commandWord.equals("help")) {			printHelp();		} else if (commandWord.equals("go")) {			goRoom(command);		} else if (commandWord.equals("quit")) {			if (command.hasSecondWord()) {				System.out.println("Quit what?");			} else {				return true; // signal that we want to quit			}		}		return false;	}	private void printHelp() {		System.out.println("You are lost. You are alone. You wander");		System.out.println("around at Monash Uni, Peninsula Campus.");		System.out.println();		System.out.println("Your command words are:");		System.out.println(parser.showCommands());	}	private void goRoom(Command command) {		if (!command.hasSecondWord()) {			System.out.println("Go where?");		} else {			String direction = command.getSecondWord();			// Try to leave current room.			Room nextRoom = currentRoom.nextRoom(direction);			if (nextRoom == null)				System.out.println("There is no door!");			else {				currentRoom = nextRoom;				System.out.println(currentRoom.longDescription());			}		}	}}
+package ch.bbw.zork;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+
+/**
+ * Class Game - the main class of the "Zork" game.
+ *
+ * Author:  Michael Kolling, 1.1, March 2000
+ * refactoring: Rinaldo Lanza, September 2020
+ */
+public class Game {
+
+	private Parser parser;
+	private Room currentRoom;
+	private Room lastRoom;
+	private Room alba, ireland, wales, england, france, denmark, east_francia, croatia, bohemia, bavaria, ocean;
+	private Item holy_grail, skeleton_crown, sun_shield, brick, burnt_sword;
+	private List<Room> rooms;
+	private Player player;
+	private Kingdom currentKingdom;
+	private Army playerArmy;
+	private Item equippedItem;
+	private Set<Kingdom> conquered = EnumSet.noneOf(Kingdom.class);
+
+	public Game() {
+		parser = new Parser(System.in);
+
+		alba = new Room("alba", "Kingdom of Alba");
+		ireland = new Room("ireland", "Kingdom of Ireland");
+		wales = new Room("wales", "Kingdom of Wales");
+		england = new Room("england", "Kingdom of England");
+		france = new Room("france", "Kingdom of France");
+		denmark = new Room("denmark", "Kingdom of Denmark");
+		east_francia = new Room("east-francia", "Kingdom of East Francia");
+		croatia = new Room("croatia", "Kingdom of Croatia");
+		bohemia = new Room("bohemia", "Kingdom of Bohemia");
+		bavaria = new Room("bavaria", "Kingdom of Bavaria");
+		ocean = new Room("ocean", "The open ocean");
+
+		holy_grail = new Item("holy-grail", "Holy Grail of Power", 100,
+				TroopCategory.LEVIES, TroopCategory.CAVALRY);
+		skeleton_crown = new Item("skeleton-crown", "Skeleton Crown of Conjuring", 3.5,
+				TroopCategory.HEAVY_INFANTRY, TroopCategory.ARCHERS);
+		sun_shield = new Item("sun-shield", "Sun Shield of Light", 7.5,
+				TroopCategory.ARCHERS, TroopCategory.HEAVY_INFANTRY);
+		brick = new Item("brick", "Just a brick", 1,
+				TroopCategory.PIKEMEN, TroopCategory.LEVIES);
+		burnt_sword = new Item("burnt-sword", "Burnt Sword of Fire", 5.6,
+				TroopCategory.CAVALRY, TroopCategory.PIKEMEN);
+
+		player = new Player();
+		rooms = new ArrayList<Room>(Arrays.asList(alba, ireland, wales, england, france, denmark,
+				east_francia, croatia, bohemia, bavaria, ocean));
+
+		alba.addNeighbour(england);
+		alba.addNeighbour(wales);
+		england.addNeighbour(wales);
+		france.addNeighbour(east_francia);
+		denmark.addNeighbour(east_francia);
+		east_francia.addNeighbour(bavaria);
+		east_francia.addNeighbour(croatia);
+		bavaria.addNeighbour(bohemia);
+		bavaria.addNeighbour(croatia);
+		ocean.addNeighbour(ireland);
+		ocean.addNeighbour(wales);
+		ocean.addNeighbour(alba);
+		ocean.addNeighbour(england);
+		ocean.addNeighbour(france);
+		ocean.addNeighbour(denmark);
+		ocean.addNeighbour(east_francia);
+		ocean.addNeighbour(croatia);
+
+		alba.addItem(holy_grail);
+		alba.addItem(skeleton_crown);
+		alba.addItem(sun_shield);
+		wales.addItem(brick);
+		wales.addItem(burnt_sword);
+
+		currentRoom = null;
+		lastRoom = null;
+	}
+
+	/**
+	 * Main play routine. Loops until end of play.
+	 */
+	public void play() {
+		printWelcome();
+
+		// Enter the main command loop. Here we repeatedly read commands and
+		// execute them until the game is over.
+		boolean finished = false;
+		while (!finished) {
+			Command command = parser.getCommand();
+			finished = processCommand(command);
+		}
+		System.out.println("Thank you for playing. Good bye.");
+	}
+
+	private void printWelcome() {
+		System.out.println();
+		System.out.println("Welcome to Zork!");
+		System.out.println("Choose your starting kingdom with: start <kingdom>");
+		System.out.println("Available kingdoms: " + kingdomNames() + ".");
+		System.out.println("Type 'help' if you need help.");
+	}
+
+	private boolean processCommand(Command command) {
+		if (command.isUnknown()) {
+			System.out.println("I don't know what you mean...");
+			return false;
+		}
+
+		String commandWord = command.getCommandWord();
+		if (commandWord.equals("help")) {
+			printHelp();
+		} else if (commandWord.equals("start")) {
+			startGame(command);
+		} else if (commandWord.equals("attack")) {
+			return attackCurrentKingdom(command);
+		} else if (commandWord.equals("status")) {
+			printStatus();
+		} else if (commandWord.equals("troops")) {
+			printTroops();
+		} else if (commandWord.equals("switch")) {
+			switchTroops(command);
+		} else if (commandWord.equals("equip")) {
+			equipItem(command);
+		} else if (commandWord.equals("go")) {
+			goRoom(command);
+		} else if (commandWord.equals("quit")) {
+			if (command.hasSecondWord()) {
+				System.out.println("Quit what?");
+			} else {
+				return true;
+			}
+		} else if (commandWord.equals("back")) {
+			back(command);
+		} else if (commandWord.equals("map")) {
+			map();
+		} else if (commandWord.equals("pickup")) {
+			pickUpItem(command);
+		} else if (commandWord.equals("drop")) {
+			dropItem(command);
+		} else if (commandWord.equals("inventory")) {
+			showInventory();
+		}
+		return false;
+	}
+
+	private void printHelp() {
+		System.out.println("Choose a starting kingdom with 'start <kingdom>'.");
+		System.out.println("Travel to neighboring countries with 'go <country-id>'.");
+		System.out.println("To attack, enter an unconquered kingdom and use 'attack'. Your army strengths are compared automatically.");
+		System.out.println("Use 'pickup' and 'inventory' to manage items; equip a carried item with 'equip <item-id>'.");
+		System.out.println("Use 'switch <current_type> <unlocked_type>' to change troop types.");
+		System.out.println();
+		System.out.println("Your command words are:");
+		System.out.println(parser.showCommands());
+	}
+
+	private void startGame(Command command) {
+		if (currentKingdom != null) {
+			System.out.println("You have already chosen a starting kingdom.");
+			return;
+		}
+		Kingdom startingKingdom = Kingdom.fromName(command.getArgumentString());
+		if (startingKingdom == null) {
+			System.out.println("Choose one of: " + kingdomNames() + ".");
+			return;
+		}
+		currentKingdom = startingKingdom;
+		currentRoom = roomFor(startingKingdom);
+		playerArmy = new Army(startingKingdom.getTroops());
+		conquered.add(startingKingdom);
+		System.out.println(currentRoom.longDescription());
+		System.out.println("Your army is ready. Use 'status' to inspect it.");
+	}
+
+	private String kingdomNames() {
+		List<String> names = new ArrayList<String>();
+		for (Kingdom kingdom : Kingdom.values()) {
+			names.add(kingdom.getDisplayName());
+		}
+		return String.join(", ", names);
+	}
+
+	private Room roomFor(Kingdom kingdom) {
+		switch (kingdom) {
+		case ALBA:
+			return alba;
+		case IRELAND:
+			return ireland;
+		case WALES:
+			return wales;
+		case ENGLAND:
+			return england;
+		case FRANCE:
+			return france;
+		case DENMARK:
+			return denmark;
+		case EAST_FRANCIA:
+			return east_francia;
+		case CROATIA:
+			return croatia;
+		case BOHEMIA:
+			return bohemia;
+		default:
+			return bavaria;
+		}
+	}
+
+	private Kingdom kingdomFor(Room room) {
+		return room == null ? null : Kingdom.fromName(room.getCountry());
+	}
+
+	private void goRoom(Command command) {
+		if (currentRoom == null) {
+			System.out.println("Choose a starting kingdom first with 'start <kingdom>'.");
+			return;
+		}
+		if (command.getArgumentCount() == 0) {
+			System.out.println("Go where? Enter a neighboring country name.");
+			return;
+		}
+
+		String countryId = command.getArgumentString().trim().toLowerCase(Locale.ENGLISH)
+				.replace(' ', '-').replace('_', '-');
+		Room nextRoom = currentRoom.nextRoom(countryId);
+		if (nextRoom == null) {
+			System.out.println("That is not an option! Check your neighbours.");
+			return;
+		}
+		lastRoom = currentRoom;
+		currentRoom = nextRoom;
+		currentKingdom = kingdomFor(currentRoom);
+		System.out.println(currentRoom.longDescription());
+		if (currentKingdom == null) {
+			System.out.println("You are at sea. There is no kingdom to conquer here.");
+		} else if (conquered.contains(currentKingdom)) {
+			System.out.println("This kingdom is under your control.");
+		} else {
+			System.out.println("This kingdom is unconquered. Use 'attack' to fight.");
+		}
+	}
+
+	private boolean attackCurrentKingdom(Command command) {
+		if (playerArmy == null) {
+			System.out.println("Choose a starting kingdom first.");
+			return false;
+		}
+		if (command.getArgumentCount() != 0) {
+			System.out.println("Use: attack");
+			return false;
+		}
+		if (currentKingdom == null) {
+			System.out.println("There is no kingdom to attack at sea.");
+			return false;
+		}
+		if (conquered.contains(currentKingdom)) {
+			System.out.println("You already control this kingdom.");
+			return false;
+		}
+
+		Army enemy = new Army(currentKingdom.getTroops());
+		CombatEngine.Result result = CombatEngine.compare(playerArmy, enemy, equippedItem);
+		System.out.println("Your army strength: " + result.getPlayerPower());
+		System.out.println(currentKingdom.getDisplayName() + " army strength: " + result.getEnemyPower());
+		if (result.isDraw()) {
+			System.out.println("The battle is a draw. Switch troop types or equip an item and try again.");
+			return false;
+		}
+		if (!result.isPlayerVictory()) {
+			System.out.println("The defending kingdom wins. Your army remains intact.");
+			return false;
+		}
+
+		conquered.add(currentKingdom);
+		for (TroopType type : currentKingdom.getTroopTypes()) {
+			playerArmy.unlockTroop(type);
+		}
+		System.out.println(currentKingdom.getDisplayName() + " has been conquered.");
+		System.out.println("New troop types unlocked. Use 'troops' to view them.");
+		if (conquered.size() == Kingdom.values().length) {
+			System.out.println("You have conquered every kingdom. You win!");
+			return true;
+		}
+		return false;
+	}
+
+	private void printStatus() {
+		if (playerArmy == null) {
+			System.out.println("Choose a starting kingdom first.");
+			return;
+		}
+		String location = currentKingdom == null ? "The open ocean"
+				: currentKingdom.getDisplayName()
+						+ (conquered.contains(currentKingdom) ? " (controlled)" : " (unconquered)");
+		System.out.println("Location: " + location);
+		System.out.println("Army: " + playerArmy.getTotalTroops() + " soldiers in "
+				+ playerArmy.getTroops().size() + " troop types.");
+		System.out.println("Conquered: " + conquered.size() + "/" + Kingdom.values().length + ".");
+		System.out.println("Equipped item: "
+				+ (equippedItem == null ? "none" : describeItem(equippedItem)));
+	}
+
+	private void printTroops() {
+		if (playerArmy == null) {
+			System.out.println("Choose a starting kingdom first.");
+			return;
+		}
+		System.out.println("Your troops:");
+		for (Map.Entry<TroopType, Integer> troop : playerArmy.getTroops().entrySet()) {
+			System.out.println("  " + troop.getKey().getDisplayName() + ": " + troop.getValue());
+		}
+		System.out.println("Unlocked types: " + troopNames(playerArmy.getUnlockedTroops()));
+	}
+
+	private String troopNames(Set<TroopType> troopTypes) {
+		List<String> names = new ArrayList<String>();
+		for (TroopType type : troopTypes) {
+			names.add(type.getDisplayName());
+		}
+		return String.join(", ", names);
+	}
+
+	private void switchTroops(Command command) {
+		if (playerArmy == null) {
+			System.out.println("Choose a starting kingdom first.");
+			return;
+		}
+		if (command.getArgumentCount() != 2) {
+			System.out.println("Use: switch <current_type> <unlocked_type>.");
+			return;
+		}
+		TroopType from = TroopType.fromName(command.getSecondWord());
+		TroopType to = TroopType.fromName(command.getThirdWord());
+		if (from == null || to == null || !playerArmy.switchTroop(from, to)) {
+			System.out.println("That troop switch is not available. Use 'troops' to see unlocked types.");
+			return;
+		}
+		System.out.println("Your troops are now using " + to.getDisplayName() + ".");
+	}
+
+	private void back(Command command) {
+		if (command.getArgumentCount() == 0 && lastRoom != null) {
+			Room previousRoom = currentRoom;
+			currentRoom = lastRoom;
+			lastRoom = previousRoom;
+			currentKingdom = kingdomFor(currentRoom);
+			System.out.println(currentRoom.longDescription());
+		} else if (currentRoom == null) {
+			System.out.println("Choose a starting kingdom first.");
+		} else {
+			System.out.println("There is nowhere to go back to.");
+		}
+	}
+
+	private void map() {
+		if (currentRoom == null) {
+			System.out.println("Choose a starting kingdom first.");
+			return;
+		}
+		for (int index = 0; index < rooms.size(); index++) {
+			Room room = rooms.get(index);
+			String here = room == currentRoom ? " (You are here)" : "";
+			System.out.println((index + 1) + ". " + room.getDescription() + room.itemString()
+					+ roomControlStatus(room) + here + ".");
+		}
+	}
+
+	private String roomControlStatus(Room room) {
+		Kingdom kingdom = kingdomFor(room);
+		if (kingdom == null || playerArmy == null) {
+			return "";
+		}
+		return conquered.contains(kingdom) ? " (controlled)" : " (unconquered)";
+	}
+
+	private void pickUpItem(Command command) {
+		if (currentRoom == null) {
+			System.out.println("Choose a starting kingdom first.");
+			return;
+		}
+		if (command.getArgumentCount() != 1) {
+			System.out.println("Use: pickup <item-id>.");
+			return;
+		}
+		Item itemToAdd = findItem(currentRoom.getItems(), command.getSecondWord());
+		if (itemToAdd == null) {
+			System.out.println("There is no such item here.");
+		} else if (player.addItem(itemToAdd)) {
+			currentRoom.removeItem(itemToAdd);
+			System.out.println("Added " + itemToAdd.getDescription() + " to the inventory.");
+		} else {
+			System.out.println("You can't pick this up! It's too heavy!");
+		}
+	}
+
+	private void dropItem(Command command) {
+		if (currentRoom == null) {
+			System.out.println("Choose a starting kingdom first.");
+			return;
+		}
+		if (command.getArgumentCount() != 1) {
+			System.out.println("Use: drop <item-id>.");
+			return;
+		}
+		Item itemToDrop = findItem(player.getItems(), command.getSecondWord());
+		if (itemToDrop == null) {
+			System.out.println("There is no such item in your inventory.");
+			return;
+		}
+		player.removeItem(itemToDrop);
+		if (itemToDrop == equippedItem) {
+			equippedItem = null;
+		}
+		currentRoom.addItem(itemToDrop);
+		System.out.println("Removed " + itemToDrop.getDescription() + " from the inventory.");
+	}
+
+	private Item findItem(List<Item> items, String name) {
+		for (Item item : items) {
+			if (item.getName().equalsIgnoreCase(name)) {
+				return item;
+			}
+		}
+		return null;
+	}
+
+	private void showInventory() {
+		player.showInventory();
+		if (!player.getItems().isEmpty()) {
+			List<String> itemIds = new ArrayList<String>();
+			for (Item item : player.getItems()) {
+				itemIds.add(item.getName());
+			}
+			System.out.println("Item ids: " + String.join(", ", itemIds) + ".");
+		}
+		System.out.println("Equipped item: "
+				+ (equippedItem == null ? "none" : describeItem(equippedItem)));
+	}
+
+	private void equipItem(Command command) {
+		if (playerArmy == null) {
+			System.out.println("Choose a starting kingdom first.");
+			return;
+		}
+		if (command.getArgumentCount() != 1) {
+			System.out.println("Use: equip <item-id>.");
+			return;
+		}
+		Item item = findItem(player.getItems(), command.getSecondWord());
+		if (item == null) {
+			System.out.println("You can only equip an item in your inventory.");
+			return;
+		}
+		equippedItem = item;
+		System.out.println("Equipped " + describeItem(item) + ".");
+	}
+
+	private String describeItem(Item item) {
+		List<String> effects = new ArrayList<String>();
+		for (TroopCategory category : TroopCategory.values()) {
+			int modifier = item.getPowerModifier(category);
+			if (modifier != 0) {
+				effects.add((modifier > 0 ? "+" : "") + modifier + "% "
+						+ category.name().toLowerCase(Locale.ENGLISH).replace('_', ' ') + " power");
+			}
+		}
+		return item.getDescription() + " (" + String.join(", ", effects) + ")";
+	}
+}

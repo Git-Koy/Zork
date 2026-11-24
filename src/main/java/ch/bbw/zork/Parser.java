@@ -1,1 +1,43 @@
-package ch.bbw.zork;/* * author:  Michael Kolling, Version: 1.0, Date: July 1999 * refactoring: Rinaldo Lanza, September 2020 */import java.io.BufferedReader;import java.io.InputStream;import java.io.InputStreamReader;import java.util.StringTokenizer;public class Parser {	private CommandWords validCommandWords;	private InputStream inputStream;	public Parser(InputStream inputStream) {		this.inputStream = inputStream;		this.validCommandWords = new CommandWords();	}	public Command getCommand() {		String inputLine;		String word1;		String word2;		System.out.print("> ");		BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(this.inputStream));		try {			inputLine = bufferedReader.readLine();			String[] tokens = inputLine.split(" ");			switch(tokens.length) {				case 2:					if (validCommandWords.isCommand(tokens[0])) {						return new Command(tokens[0], tokens[1]);					} else {						// TODO: refactor this						return new Command(null, tokens[1]);					}				case 1:					if (validCommandWords.isCommand(tokens[0])) {						return new Command(tokens[0]);					} else {						// TODO: refactor this and that						return new Command(null);					}				default:					// TODO: handle this error with an exception and non 					break;			}		} catch (java.io.IOException exc) {			System.out.println("There was an error during reading: " + exc.getMessage());		}		// TODO: handle error		return new Command(null);	}	public String showCommands() {		return validCommandWords.showAll();	}}
+package ch.bbw.zork;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.Arrays;
+
+public class Parser {
+	private final CommandWords validCommandWords;
+	private final BufferedReader bufferedReader;
+
+	public Parser(InputStream inputStream) {
+		this.bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+		this.validCommandWords = new CommandWords();
+	}
+
+	public Command getCommand() {
+		System.out.print("> ");
+		try {
+			String inputLine = bufferedReader.readLine();
+			if (inputLine == null) {
+				return new Command("quit");
+			}
+			if (inputLine.trim().isEmpty()) {
+				return new Command(null);
+			}
+			String[] tokens = inputLine.trim().split("\\s+");
+			String commandWord = tokens[0];
+			if (!validCommandWords.isCommand(commandWord)) {
+				return new Command(null);
+			}
+			return new Command(commandWord, Arrays.copyOfRange(tokens, 1, tokens.length));
+		} catch (IOException exc) {
+			System.out.println("There was an error during reading: " + exc.getMessage());
+			return new Command(null);
+		}
+	}
+
+	public String showCommands() {
+		return validCommandWords.showAll();
+	}
+}
