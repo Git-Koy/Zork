@@ -73,7 +73,7 @@ public class KingdomCombatTest {
 		first.clear();
 
 		assertEquals(2, Kingdom.ALBA.getTroops().size());
-		assertEquals(Integer.valueOf(12), Kingdom.ALBA.getTroops().get(TroopType.PIKES));
+		assertEquals(Integer.valueOf(14), Kingdom.ALBA.getTroops().get(TroopType.PIKES));
 	}
 
 	@Test
