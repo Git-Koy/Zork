@@ -79,10 +79,10 @@ public class Item {
 	 *         category, or zero otherwise
 	 */
 	public int getPowerModifier(TroopCategory category) {
-		if (category == bonusCategory) {
+		if (bonusCategory != null && category == bonusCategory) {
 			return BONUS_PERCENT;
 		}
-		if (category == penaltyCategory) {
+		if (penaltyCategory != null && category == penaltyCategory) {
 			return -PENALTY_PERCENT;
 		}
 		return 0;
