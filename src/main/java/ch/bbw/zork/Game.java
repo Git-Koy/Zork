@@ -511,6 +511,13 @@ public class Game {
 		System.out.println("Removed " + itemToDrop.getDescription() + " from the inventory.");
 	}
 
+	/**
+	 * Searches a list of items for an item with the given name (ignores upper/lower case).
+	 *
+	 * @param items the list of items to search
+	 * @param name the name of the item to find
+	 * @return the matching item, or {@code null} if none was found
+	 */
 	private Item findItem(List<Item> items, String name) {
 		for (Item item : items) {
 			if (item.getName().equalsIgnoreCase(name)) {
