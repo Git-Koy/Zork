@@ -2,11 +2,9 @@ package ch.bbw.zork;
 
 /**
  * Recognizes and lists the commands available in the game.
- */
-
-/*
- * author:  Michael Kolling, Version: 1.0, Date: July 1999
- * refactoring: Rinaldo Lanza, September 2020
+ *
+ * @author Michael Kolling (template, 1999)
+ * @author Rinaldo Lanza (refactoring, 2020)
  */
 
 import java.util.Arrays;
