@@ -27,7 +27,7 @@ The ocean is not a kingdom and cannot be conquered. It connects the British Isle
 continent.
 
 - **a) Sketch:** see the map in the [README](../README.md#the-world-map) (`docs/map.png`).
-- **b) Class diagram:** see [class-diagram.md](class-diagram.png).
+- **b) Class diagram:** see [class-diagram.png](class-diagram.png).
 
 **Change from the template:** instead of the fixed directions north, east, south and west, the
 player travels by typing the name of a neighbouring country (`go england`). Our map has
