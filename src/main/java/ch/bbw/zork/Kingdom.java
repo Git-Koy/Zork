@@ -22,7 +22,9 @@ public enum Kingdom {
 	CROATIA("Croatia", new TroopType[] { TroopType.ARMORED_HORSEMEN, TroopType.LIGHT_HORSEMEN },
 			new int[] { 14, 14 }),
 	BOHEMIA("Bohemia", new TroopType[] { TroopType.ARMORED_FOOTMEN, TroopType.PIKES },
-			new int[] { 12, 12 });
+			new int[] { 12, 12 }),
+	BAVARIA("Bavaria", new TroopType[] { TroopType.HUSCARLS, TroopType.LEVIES },
+			new int[] { 10, 12 });
 
 	private final String displayName;
 	private final TroopType[] troopTypes;
@@ -50,40 +52,21 @@ public enum Kingdom {
 		return troops;
 	}
 
-	public GameItem getItem() {
-		switch (this) {
-		case ALBA:
-			return GameItem.PICTISH_STANDARD;
-		case IRELAND:
-			return GameItem.SAINT_BRIGIDS_CROSS;
-		case WALES:
-			return GameItem.WELSH_LONGBOW;
-		case ENGLAND:
-			return GameItem.ROYAL_MAIL;
-		case FRANCE:
-			return GameItem.KNIGHTS_LANCE;
-		case DENMARK:
-			return GameItem.DANE_AXE;
-		case EAST_FRANCIA:
-			return GameItem.IMPERIAL_SEAL;
-		case CROATIA:
-			return GameItem.HORSE_SPURS;
-		default:
-			return GameItem.BOHEMIAN_PIKEHEAD;
-		}
-	}
-
 	public static Kingdom fromName(String value) {
 		if (value == null) {
 			return null;
 		}
-		String normalized = value.trim().toLowerCase(Locale.ENGLISH).replace('_', ' ');
+		String normalized = normalize(value);
 		for (Kingdom kingdom : values()) {
-			if (kingdom.displayName.toLowerCase(Locale.ENGLISH).equals(normalized)
-					|| kingdom.name().toLowerCase(Locale.ENGLISH).replace('_', ' ').equals(normalized)) {
+			if (normalize(kingdom.displayName).equals(normalized)
+					|| normalize(kingdom.name()).equals(normalized)) {
 				return kingdom;
 			}
 		}
 		return null;
+	}
+
+	private static String normalize(String value) {
+		return value.trim().replace('_', ' ').replace('-', ' ').toLowerCase(Locale.ENGLISH);
 	}
 }
