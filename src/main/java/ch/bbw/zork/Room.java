@@ -1,46 +1,1 @@
-package ch.bbw.zork;
-
-import java.util.LinkedHashMap;
-import java.util.Map;
-
-public class Room {
-	private final String description;
-	private final Map<String, Room> exits = new LinkedHashMap<String, Room>();
-
-	public Room(String description) {
-		this.description = description;
-	}
-
-	public void setExits(Room north, Room east, Room south, Room west) {
-		exits.clear();
-		setExit("north", north);
-		setExit("east", east);
-		setExit("south", south);
-		setExit("west", west);
-	}
-
-	public void setExit(String direction, Room room) {
-		if (room != null) {
-			exits.put(direction, room);
-		}
-	}
-
-	public String shortDescription() {
-		return description;
-	}
-
-	public String longDescription() {
-		return "You are in " + description + ".\n" + exitString();
-	}
-
-	private String exitString() {
-		if (exits.isEmpty()) {
-			return "Exits: none";
-		}
-		return "Exits: " + String.join(" ", exits.keySet());
-	}
-
-	public Room nextRoom(String direction) {
-		return exits.get(direction);
-	}
-}
+package ch.bbw.zork;/** * Author:  Michael Kolling, Version: 1.1, Date: August 2000 * refactoring: Rinaldo Lanza, September 2020 */import java.util.ArrayList;import java.util.HashMap;import java.util.List;import java.util.stream.Collectors;public class Room {	private String country;	private String description;	private HashMap<String, Room> neighbours;	private ArrayList<Item> items;	public Room(String country, String description) {		this.country = country;		this.description = description;		this.neighbours = new HashMap<>();		this.items = new ArrayList<>();	}	public void addNeighbour(Room neighbour) {		neighbours.put(neighbour.getCountry(), neighbour);		neighbour.neighbours.put(this.country, this);	}	public void addItem(Item item) {		this.items.add(item);	}	public void removeItem(Item item) {		this.items.remove(item);	}	public String shortDescription() {		return description;	}	public String getCountry() {		return country;	}	public String getDescription() {		return description;	}	public String longDescription() {		StringBuilder stringBuilder = new StringBuilder("You are in " + description + itemString() + ".\n");		stringBuilder.append(exitString());		return stringBuilder.toString();	}	private String exitString() {		return "Neighbours: " + String.join(" ", neighbours.keySet());	}	public String itemString() {		if (items.isEmpty()) {			return " which has no item";		} else if (items.size() == 1) {			return " which has "+ items.get(0).getName();		} else {			String itemStorage = " which has the items ";			for(int i = 0; i < items.size(); i++) {				itemStorage += items.get(i).getName();				if (i == items.size() - 1) {					itemStorage += "";				} else if (i == items.size() - 2) {					itemStorage += " and ";				} else {					itemStorage += ", ";				}			}			return itemStorage;		}	}	public Room nextRoom(String country) {		return neighbours.get(country);	}	public ArrayList<Item> getItems() {		return items;	}}
