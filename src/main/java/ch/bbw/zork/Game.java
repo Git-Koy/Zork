@@ -155,7 +155,10 @@ public class Game {
 		}
 		currentKingdom = startingKingdom;
 		currentRoom = roomFor(startingKingdom);
+		playerArmy = new Army(startingKingdom.getTroops());
+		conquered.add(startingKingdom);
 		System.out.println(currentRoom.longDescription());
+		System.out.println("Your army is ready. Use 'status' to inspect it.");
 	}
 
 	private String kingdomNames() {
