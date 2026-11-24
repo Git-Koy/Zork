@@ -114,6 +114,8 @@ public class Game {
 			printHelp();
 		} else if (commandWord.equals("start")) {
 			startGame(command);
+		} else if (commandWord.equals("attack")) {
+			attackCurrentKingdom(command);
 		} else if (commandWord.equals("go")) {
 			goRoom(command);
 		} else if (commandWord.equals("quit")) {
@@ -202,6 +204,38 @@ public class Game {
 		if (currentRoom == null) {
 			System.out.println("Choose a starting kingdom first with 'start <kingdom>'.");
 			return;
+		}
+
+		private void attackCurrentKingdom(Command command) {
+			if (playerArmy == null) {
+				System.out.println("Choose a starting kingdom first.");
+				return;
+			}
+			if (command.getArgumentCount() != 0) {
+				System.out.println("Use: attack");
+				return;
+			}
+			if (currentKingdom == null) {
+				System.out.println("There is no kingdom to attack at sea.");
+				return;
+			}
+			if (conquered.contains(currentKingdom)) {
+				System.out.println("You already control this kingdom.");
+				return;
+			}
+
+			Army enemy = new Army(currentKingdom.getTroops());
+			CombatEngine.Result result = CombatEngine.compare(playerArmy, enemy, equippedItem);
+			System.out.println("Your army strength: " + result.getPlayerPower());
+			System.out.println(currentKingdom.getDisplayName() + " army strength: " + result.getEnemyPower());
+			if (result.isDraw()) {
+				System.out.println("The battle is a draw. Switch troop types or equip an item and try again.");
+			} else if (result.isPlayerVictory()) {
+				conquered.add(currentKingdom);
+				System.out.println(currentKingdom.getDisplayName() + " has been conquered.");
+			} else {
+				System.out.println("The defending kingdom wins. Your army remains intact.");
+			}
 		}
 		if (command.getArgumentCount() != 1) {
 			System.out.println("Go where? Enter a neighboring country name.");
