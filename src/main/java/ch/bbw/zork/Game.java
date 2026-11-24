@@ -347,6 +347,10 @@ public class Game {
 		System.out.println("Your troops are now using " + to.getDisplayName() + ".");
 	}
 
+	/**
+	 * Moves the player back to the previous country.
+	 * @param command the entered command, must not have a second word
+	 */
 	private void back(Command command) {
 		if (command.getArgumentCount() == 0 && lastRoom != null) {
 			Room previousRoom = currentRoom;
@@ -361,6 +365,9 @@ public class Game {
 		}
 	}
 
+	/**
+	 * Prints all countries with their items and control status and marks the country the player is currently in.
+	 */
 	private void map() {
 		if (currentRoom == null) {
 			System.out.println("Choose a starting kingdom first.");
@@ -382,6 +389,10 @@ public class Game {
 		return conquered.contains(kingdom) ? " (controlled)" : " (unconquered)";
 	}
 
+	/**
+	 * Picks up an item from the current country if it exists and the player has weight left over.
+	 * @param command the entered command, the second word is the item
+	 */
 	private void pickUpItem(Command command) {
 		if (currentRoom == null) {
 			System.out.println("Choose a starting kingdom first.");
@@ -402,6 +413,10 @@ public class Game {
 		}
 	}
 
+	/**
+	 * Drops an item from the inventory to the country the player is currently in.
+	 * @param command the entered command, the second word is the item
+	 */
 	private void dropItem(Command command) {
 		if (currentRoom == null) {
 			System.out.println("Choose a starting kingdom first.");
@@ -433,6 +448,9 @@ public class Game {
 		return null;
 	}
 
+	/**
+	 * Prints the inventory, the item ids to use in commands and the currently equipped item.
+	 */
 	private void showInventory() {
 		player.showInventory();
 		if (!player.getItems().isEmpty()) {
