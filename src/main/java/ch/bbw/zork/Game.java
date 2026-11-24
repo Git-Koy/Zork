@@ -217,6 +217,13 @@ public class Game {
 		currentRoom = nextRoom;
 		currentKingdom = kingdomFor(currentRoom);
 		System.out.println(currentRoom.longDescription());
+		if (currentKingdom == null) {
+			System.out.println("You are at sea. There is no kingdom to conquer here.");
+		} else if (conquered.contains(currentKingdom)) {
+			System.out.println("This kingdom is under your control.");
+		} else {
+			System.out.println("This kingdom is unconquered. Use 'attack' to fight.");
+		}
 	}
 
 	private void back(Command command) {
