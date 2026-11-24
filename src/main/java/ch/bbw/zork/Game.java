@@ -42,11 +42,16 @@ public class Game {
 		bavaria = new Room("bavaria", "Kingdom of Bavaria");
 		ocean = new Room("ocean", "The open ocean");
 
-		holy_grail = new Item("holy-grail", "Holy Grail of Power", 100);
-		skeleton_crown = new Item("skeleton-crown", "Skeleton Crown of Conjuring", 3.5);
-		sun_shield = new Item("sun-shield", "Sun Shield of Light", 7.5);
-		brick = new Item("brick", "Just a brick", 1);
-		burnt_sword = new Item("burnt-sword", "Burnt Sword of Fire", 5.6);
+		holy_grail = new Item("holy-grail", "Holy Grail of Power", 100,
+				TroopCategory.LEVIES, TroopCategory.CAVALRY);
+		skeleton_crown = new Item("skeleton-crown", "Skeleton Crown of Conjuring", 3.5,
+				TroopCategory.HEAVY_INFANTRY, TroopCategory.ARCHERS);
+		sun_shield = new Item("sun-shield", "Sun Shield of Light", 7.5,
+				TroopCategory.ARCHERS, TroopCategory.HEAVY_INFANTRY);
+		brick = new Item("brick", "Just a brick", 1,
+				TroopCategory.PIKEMEN, TroopCategory.LEVIES);
+		burnt_sword = new Item("burnt-sword", "Burnt Sword of Fire", 5.6,
+				TroopCategory.CAVALRY, TroopCategory.PIKEMEN);
 
 		player = new Player();
 		rooms = new ArrayList<Room>(Arrays.asList(alba, ireland, wales, england, france, denmark,
