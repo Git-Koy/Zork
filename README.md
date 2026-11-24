@@ -109,4 +109,5 @@ Damage is calculated with four numbers:
 
 ## Documentation
 - [How we solved the tasks](docs/tasks.md)
-- ![Class diagram](docs/class-diagram.png)
+- Class Diagram:
+  ![Class diagram](docs/class-diagram.png)
