@@ -23,9 +23,13 @@ public class Game {
 	private Item holy_grail, skeleton_crown, sun_shield, brick, burnt_sword;
 	private List<Room> rooms;
 	private Player player;
+	/** Kingdom currently occupied by the player, or {@code null} at sea/before game start. */
 	private Kingdom currentKingdom;
+	/** Player's active army after a starting kingdom has been selected. */
 	private Army playerArmy;
+	/** Inventory item whose modifiers are applied to the player's battle power. */
 	private Item equippedItem;
+	/** Kingdoms successfully conquered by the player. */
 	private Set<Kingdom> conquered = EnumSet.noneOf(Kingdom.class);
 
 	public Game() {
@@ -102,6 +106,9 @@ public class Game {
 		System.out.println("Thank you for playing. Good bye.");
 	}
 
+	/**
+	 * Prints the welcome message and available starting kingdoms.
+	 */
 	private void printWelcome() {
 		System.out.println();
 		System.out.println("Welcome to Zork!");
@@ -110,6 +117,12 @@ public class Game {
 		System.out.println("Type 'help' if you need help.");
 	}
 
+	/**
+	 * Dispatches a parsed command to its handler.
+	 *
+	 * @param command parsed user command
+	 * @return {@code true} when the play loop should end
+	 */
 	private boolean processCommand(Command command) {
 		if (command.isUnknown()) {
 			System.out.println("I don't know what you mean...");
@@ -153,6 +166,9 @@ public class Game {
 		return false;
 	}
 
+	/**
+	 * Prints command guidance for kingdom selection, movement, combat, and items.
+	 */
 	private void printHelp() {
 		System.out.println("Choose a starting kingdom with 'start <kingdom>'.");
 		System.out.println("Travel to neighboring countries with 'go <country-id>'.");
@@ -164,6 +180,11 @@ public class Game {
 		System.out.println(parser.showCommands());
 	}
 
+	/**
+	 * Starts the game in the named kingdom and initializes its army.
+	 *
+	 * @param command command containing the kingdom name
+	 */
 	private void startGame(Command command) {
 		if (currentKingdom != null) {
 			System.out.println("You have already chosen a starting kingdom.");
@@ -182,6 +203,11 @@ public class Game {
 		System.out.println("Your army is ready. Use 'status' to inspect it.");
 	}
 
+	/**
+	 * Returns the display names of all selectable kingdoms.
+	 *
+	 * @return comma-separated kingdom names
+	 */
 	private String kingdomNames() {
 		List<String> names = new ArrayList<String>();
 		for (Kingdom kingdom : Kingdom.values()) {
@@ -190,6 +216,12 @@ public class Game {
 		return String.join(", ", names);
 	}
 
+	/**
+	 * Resolves a kingdom to its world-map room.
+	 *
+	 * @param kingdom kingdom to resolve
+	 * @return room representing the kingdom
+	 */
 	private Room roomFor(Kingdom kingdom) {
 		switch (kingdom) {
 		case ALBA:
@@ -215,10 +247,21 @@ public class Game {
 		}
 	}
 
+	/**
+	 * Resolves a world-map room to a kingdom; the open ocean has no kingdom.
+	 *
+	 * @param room room to resolve
+	 * @return corresponding kingdom, or {@code null} at sea
+	 */
 	private Kingdom kingdomFor(Room room) {
 		return room == null ? null : Kingdom.fromName(room.getCountry());
 	}
 
+	/**
+	 * Moves to an adjacent country and reports its control state.
+	 *
+	 * @param command command containing the neighboring country id
+	 */
 	private void goRoom(Command command) {
 		if (currentRoom == null) {
 			System.out.println("Choose a starting kingdom first with 'start <kingdom>'.");
@@ -249,6 +292,12 @@ public class Game {
 		}
 	}
 
+	/**
+	 * Resolves a battle in the kingdom the player currently occupies.
+	 *
+	 * @param command attack command, which must not have arguments
+	 * @return {@code true} when the player has conquered every kingdom
+	 */
 	private boolean attackCurrentKingdom(Command command) {
 		if (playerArmy == null) {
 			System.out.println("Choose a starting kingdom first.");
@@ -293,6 +342,9 @@ public class Game {
 		return false;
 	}
 
+	/**
+	 * Prints the player's location, army, conquest count, and equipped item.
+	 */
 	private void printStatus() {
 		if (playerArmy == null) {
 			System.out.println("Choose a starting kingdom first.");
@@ -309,6 +361,9 @@ public class Game {
 				+ (equippedItem == null ? "none" : describeItem(equippedItem)));
 	}
 
+	/**
+	 * Prints active troop counts and all unlocked troop types.
+	 */
 	private void printTroops() {
 		if (playerArmy == null) {
 			System.out.println("Choose a starting kingdom first.");
@@ -321,6 +376,12 @@ public class Game {
 		System.out.println("Unlocked types: " + troopNames(playerArmy.getUnlockedTroops()));
 	}
 
+	/**
+	 * Creates a readable list of troop type names.
+	 *
+	 * @param troopTypes troop types to list
+	 * @return comma-separated display names
+	 */
 	private String troopNames(Set<TroopType> troopTypes) {
 		List<String> names = new ArrayList<String>();
 		for (TroopType type : troopTypes) {
@@ -329,6 +390,11 @@ public class Game {
 		return String.join(", ", names);
 	}
 
+	/**
+	 * Converts an active troop stack to a different unlocked type.
+	 *
+	 * @param command command containing the source and destination troop names
+	 */
 	private void switchTroops(Command command) {
 		if (playerArmy == null) {
 			System.out.println("Choose a starting kingdom first.");
@@ -381,6 +447,12 @@ public class Game {
 		}
 	}
 
+	/**
+	 * Returns the control label for a kingdom room after a game has started.
+	 *
+	 * @param room room whose control state is requested
+	 * @return control label, or an empty string for non-kingdom rooms
+	 */
 	private String roomControlStatus(Room room) {
 		Kingdom kingdom = kingdomFor(room);
 		if (kingdom == null || playerArmy == null) {
@@ -464,6 +536,11 @@ public class Game {
 				+ (equippedItem == null ? "none" : describeItem(equippedItem)));
 	}
 
+	/**
+	 * Equips an item already carried in the player's inventory.
+	 *
+	 * @param command command containing the item id
+	 */
 	private void equipItem(Command command) {
 		if (playerArmy == null) {
 			System.out.println("Choose a starting kingdom first.");
@@ -482,6 +559,12 @@ public class Game {
 		System.out.println("Equipped " + describeItem(item) + ".");
 	}
 
+	/**
+	 * Formats an inventory item and its combat modifiers for display.
+	 *
+	 * @param item item to describe
+	 * @return item description with its non-zero modifiers
+	 */
 	private String describeItem(Item item) {
 		List<String> effects = new ArrayList<String>();
 		for (TroopCategory category : TroopCategory.values()) {

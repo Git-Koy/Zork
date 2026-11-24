@@ -18,10 +18,26 @@ public class Item {
 	private final TroopCategory bonusCategory;
 	private final TroopCategory penaltyCategory;
 
+	/**
+	 * Creates an item without combat modifiers.
+	 *
+	 * @param name item id used by inventory commands
+	 * @param description readable item description
+	 * @param weight item weight in kilograms
+	 */
 	public Item(String name, String description, double weight) {
 		this(name, description, weight, null, null);
 	}
 
+	/**
+	 * Creates an item with an optional troop-category bonus and penalty.
+	 *
+	 * @param name item id used by inventory commands
+	 * @param description readable item description
+	 * @param weight item weight in kilograms
+	 * @param bonusCategory category receiving a ten percent power bonus
+	 * @param penaltyCategory category receiving a five percent power penalty
+	 */
 	public Item(String name, String description, double weight, TroopCategory bonusCategory,
 			TroopCategory penaltyCategory) {
 		this.name = name;
@@ -55,6 +71,13 @@ public class Item {
 		return weight;
 	}
 
+	/**
+	 * Returns this item's power modifier for a troop category.
+	 *
+	 * @param category troop category to check
+	 * @return ten for the bonus category, negative five for the penalty
+	 *         category, or zero otherwise
+	 */
 	public int getPowerModifier(TroopCategory category) {
 		if (category == bonusCategory) {
 			return BONUS_PERCENT;
