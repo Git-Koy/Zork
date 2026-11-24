@@ -61,7 +61,7 @@ These are the troops for the different countries:
      - Armored Footmen
      - Pikes
 
-1. Bavaria
+1. Units of Bavaria:
      - Huscarls
      - Levies
 
