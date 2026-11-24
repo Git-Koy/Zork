@@ -121,6 +121,8 @@ public class Game {
 			printStatus();
 		} else if (commandWord.equals("troops")) {
 			printTroops();
+		} else if (commandWord.equals("switch")) {
+			switchTroops(command);
 		} else if (commandWord.equals("go")) {
 			goRoom(command);
 		} else if (commandWord.equals("quit")) {
@@ -251,6 +253,24 @@ public class Game {
 					names.add(type.getDisplayName());
 				}
 				return String.join(", ", names);
+			}
+
+			private void switchTroops(Command command) {
+				if (playerArmy == null) {
+					System.out.println("Choose a starting kingdom first.");
+					return;
+				}
+				if (command.getArgumentCount() != 2) {
+					System.out.println("Use: switch <current_type> <unlocked_type>.");
+					return;
+				}
+				TroopType from = TroopType.fromName(command.getSecondWord());
+				TroopType to = TroopType.fromName(command.getThirdWord());
+				if (from == null || to == null || !playerArmy.switchTroop(from, to)) {
+					System.out.println("That troop switch is not available. Use 'troops' to see unlocked types.");
+					return;
+				}
+				System.out.println("Your troops are now using " + to.getDisplayName() + ".");
 			}
 			if (command.getArgumentCount() != 0) {
 				System.out.println("Use: attack");
