@@ -8,7 +8,7 @@ import java.util.Map;
  * Kingdom metadata and its initial defending troop formation.
  */
 public enum Kingdom {
-	ALBA("Alba", new TroopType[] { TroopType.PIKES, TroopType.LEVIES }, new int[] { 12, 15 }),
+	ALBA("Alba", new TroopType[] { TroopType.PIKES, TroopType.LEVIES }, new int[] { 14, 15 }),
 	IRELAND("Ireland", new TroopType[] { TroopType.ARMORED_FOOTMEN, TroopType.LEVIES },
 			new int[] { 12, 15 }),
 	WALES("Wales", new TroopType[] { TroopType.ARCHERS, TroopType.LEVIES }, new int[] { 12, 15 }),

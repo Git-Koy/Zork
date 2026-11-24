@@ -27,9 +27,9 @@ public class CombatEngineTest {
 	@Test
 	public void troopCountsAreMultipliedByBaseStrength() {
 		CombatEngine.Result result = CombatEngine.compare(army(TroopType.ARCHERS, 7),
-				army(TroopType.PIKES, 3), null);
+				army(TroopType.LONGBOWS, 3), null);
 
-		assertEquals(17, result.getPlayerPower());
+		assertEquals(14, result.getPlayerPower());
 		assertEquals(9, result.getEnemyPower());
 		assertTrue(result.isPlayerVictory());
 	}

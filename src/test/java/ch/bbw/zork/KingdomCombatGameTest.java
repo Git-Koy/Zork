@@ -175,6 +175,15 @@ public class KingdomCombatGameTest {
 	}
 
 	@Test
+	public void albaCanWinItsFirstBattleAgainstWales() {
+		String output = play("start Alba\ngo wales\nattack\nquit\n");
+
+		assertTrue(output.contains("Your army strength: 49"));
+		assertTrue(output.contains("Wales army strength: 48"));
+		assertTrue(output.contains("Wales has been conquered."));
+	}
+
+	@Test
 	public void weakerArmyDoesNotConquerAndRemainsIntact() {
 		String output = play("start Wales\ngo england\nattack\nstatus\nquit\n");
 
@@ -239,7 +248,7 @@ public class KingdomCombatGameTest {
 	public void troopsListsStartingFormationAndUnlockedTypes() {
 		String output = play("start Alba\ntroops\nquit\n");
 
-		assertTrue(output.contains("Pikes: 12"));
+		assertTrue(output.contains("Pikes: 14"));
 		assertTrue(output.contains("Levies: 15"));
 		assertTrue(output.contains("Unlocked types: Pikes, Levies"));
 	}
